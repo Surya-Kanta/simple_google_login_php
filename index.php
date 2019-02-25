@@ -1,19 +1,12 @@
 <?php
-	session_start();
 	require_once "config.php";
 
-	if (!isset($_SESSION['access_token'])) {
-		header("Location: login.php");
-	}
-
-	if (isset($_SESSION['access_token']))
+	if (isset($_SESSION['access_token'])) {
 		$gClient->setAccessToken($_SESSION['access_token']);
-	else if (isset($_GET['code'])) {
-		$token = $gClient->fetchAccessTokesnWithAuthCode($_GET['code']);
+	} else if (isset($_GET['code'])) {
+		$gClient->authenticate($_GET['code']);
+		$token = $gClient->getAccessToken();
 		$_SESSION['access_token'] = $token;
-	} else {
-		header('Location: login.php');
-		exit();
 	}
 
 	$oAuth = new Google_Service_Oauth2($gClient);
@@ -25,6 +18,7 @@
 	$_SESSION['picture'] = $userData['picture'];
 	$_SESSION['familyName'] = $userData['familyName'];
 	$_SESSION['givenName'] = $userData['givenName'];
+
 
 ?>
 <!doctype html>
